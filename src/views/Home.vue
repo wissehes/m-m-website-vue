@@ -5,6 +5,14 @@
         <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
       </v-card>
     </v-dialog>
+    <v-alert prominent type="error" v-if="errored">
+      <v-row align="center">
+        <v-col class="grow">Kon niet verbinden met de server.</v-col>
+        <v-col class="shrink">
+          <v-btn @click="load">Opnieuw proberen</v-btn>
+        </v-col>
+      </v-row>
+    </v-alert>
     <div v-if="!loading">
       <v-row no-gutters class="toparticles">
         <v-flex v-for="article in topArticles" md6 :key="article._id" class="cover">
@@ -40,20 +48,29 @@ export default {
   data() {
     return {
       loading: true,
+      errored: false,
       topArticles: [],
       articles: [],
     };
   },
+  methods: {
+    load() {
+      this.loading = true;
+      this.errored = false
+          axios
+            .get("https://api.wissehes.nl/articles")
+            .then(res => {
+              this.articles = res.data
+              this.topArticles = this.articles.slice(0, 2)
+              this.articles = this.articles.slice(2)
+              this.errored = false;
+            })
+            .catch(() => this.errored = true)
+            .finally(() => (this.loading = false));
+    }
+  },
   mounted() {
-    axios
-      .get("https://api.wissehes.nl/articles")
-      .then(res => {
-        this.articles = res.data
-        this.topArticles = this.articles.slice(0, 2)
-        this.articles = this.articles.slice(2)
-        console.log(this.articles)
-      })
-      .finally(() => (this.loading = false));
+this.load()
   }
 };
 </script>
