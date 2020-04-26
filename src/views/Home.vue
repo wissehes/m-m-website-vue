@@ -2,7 +2,11 @@
   <div>
     <v-dialog v-model="loading" hide-overlay persistent width="300">
       <v-card color="primary" dark>
-        <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+        <v-progress-linear
+          indeterminate
+          color="white"
+          class="mb-0"
+        ></v-progress-linear>
       </v-card>
     </v-dialog>
     <v-alert prominent type="error" v-if="errored">
@@ -15,11 +19,18 @@
     </v-alert>
     <div v-if="!loading">
       <v-row no-gutters class="toparticles">
-        <v-flex v-for="article in topArticles" md6 :key="article._id" class="cover">
+        <v-flex
+          v-for="article in topArticles"
+          md6
+          :key="article._id"
+          class="cover"
+        >
           <router-link :to="`/artikel/${article._id}`">
             <div
               class="bg"
-              :style="`background-image:url('https://api.wissehes.nl${article.image.url}')`"
+              :style="
+                `background-image:url('https://api.wissehes.nl${article.image.url}')`
+              "
             ></div>
 
             <h1 class="cover-content">{{ article.title }}</h1>
@@ -27,11 +38,18 @@
         </v-flex>
       </v-row>
       <v-layout>
-        <v-flex v-for="article in articles" md4 :key="article._id" class="cover">
+        <v-flex
+          v-for="article in articles"
+          md4
+          :key="article._id"
+          class="cover"
+        >
           <router-link :to="`/artikel/${article._id}`">
             <div
               class="bg"
-              :style="`background-image:url('https://api.wissehes.nl${article.image.url}')`"
+              :style="
+                `background-image:url('https://api.wissehes.nl${article.image.url}')`
+              "
             ></div>
 
             <h1 class="cover-content">{{ article.title }}</h1>
@@ -50,27 +68,27 @@ export default {
       loading: true,
       errored: false,
       topArticles: [],
-      articles: [],
+      articles: []
     };
   },
   methods: {
     load() {
       this.loading = true;
-      this.errored = false
-          axios
-            .get("https://api.wissehes.nl/articles")
-            .then(res => {
-              this.articles = res.data
-              this.topArticles = this.articles.slice(0, 2)
-              this.articles = this.articles.slice(2)
-              this.errored = false;
-            })
-            .catch(() => this.errored = true)
-            .finally(() => (this.loading = false));
+      this.errored = false;
+      axios
+        .get("https://api.wissehes.nl/articles")
+        .then(res => {
+          this.articles = res.data;
+          this.topArticles = this.articles.slice(0, 2);
+          this.articles = this.articles.slice(2);
+          this.errored = false;
+        })
+        .catch(() => (this.errored = true))
+        .finally(() => (this.loading = false));
     }
   },
   mounted() {
-this.load()
+    this.load();
   }
 };
 </script>
