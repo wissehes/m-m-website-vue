@@ -9,59 +9,53 @@
         ></v-progress-linear>
       </v-card>
     </v-dialog>
-    <v-alert prominent type="error" v-if="errored">
-      <v-row align="center">
-        <v-col class="grow">Kon niet verbinden met de server.</v-col>
-        <v-col class="shrink">
-          <v-btn @click="load">Opnieuw proberen</v-btn>
-        </v-col>
-      </v-row>
-    </v-alert>
-    <div v-if="!loading">
-      <v-row no-gutters class="toparticles">
-        <v-flex
-          v-for="article in topArticles"
-          md6
-          :key="article._id"
-          class="cover"
-        >
-          <router-link :to="`/artikel/${article._id}`">
-            <div
-              class="bg"
-              :style="
-                `background-image:url('https://api.wissehes.nl${article.image.url}')`
-              "
-            ></div>
+    <Error v-if="errored" :load="load" />
+    <transition name="fade">
+      <div v-if="!loading">
+        <v-row no-gutters class="toparticles" transition="slide-y-transition">
+          <v-flex
+            v-for="article in topArticles"
+            md6
+            :key="article._id"
+            class="cover"
+          >
+            <router-link :to="`/artikel/${article._id}`">
+              <v-img
+                class="bg"
+                :src="`https://api.wissehes.nl${article.image.url}`"
 
-            <h1 class="cover-content">{{ article.title }}</h1>
-          </router-link>
-        </v-flex>
-      </v-row>
-      <v-layout>
-        <v-flex
-          v-for="article in articles"
-          md4
-          :key="article._id"
-          class="cover"
-        >
-          <router-link :to="`/artikel/${article._id}`">
-            <div
-              class="bg"
-              :style="
-                `background-image:url('https://api.wissehes.nl${article.image.url}')`
-              "
-            ></div>
+              ></v-img>
 
-            <h1 class="cover-content">{{ article.title }}</h1>
-          </router-link>
-        </v-flex>
-      </v-layout>
-    </div>
+              <h1 class="cover-content">{{ article.title }}</h1>
+            </router-link>
+          </v-flex>
+        </v-row>
+        <v-layout>
+          <v-flex
+            v-for="article in articles"
+            md4
+            :key="article._id"
+            class="cover"
+          >
+            <router-link :to="`/artikel/${article._id}`">
+              <v-img
+                class="bg"
+                :src="`https://api.wissehes.nl${article.image.url}`"
+              ></v-img>
+
+              <h1 class="cover-content">{{ article.title }}</h1>
+            </router-link>
+          </v-flex>
+        </v-layout>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import Error from "@/components/Error.vue"
+
 export default {
   data() {
     return {
@@ -70,6 +64,9 @@ export default {
       topArticles: [],
       articles: []
     };
+  },
+  components: {
+    Error
   },
   methods: {
     load() {
@@ -127,5 +124,12 @@ export default {
   transition: transform 0.35s ease;
   transition: transform 0.35s ease, -webkit-transform 0.35s ease;
   color: white;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>
