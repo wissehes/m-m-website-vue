@@ -56,6 +56,7 @@
 <script>
 import Error from '@/components/Error.vue'
 import axios from "axios";
+
 export default {
   data() {
     return {
@@ -124,5 +125,12 @@ export default {
   transition: transform 0.35s ease;
   transition: transform 0.35s ease, -webkit-transform 0.35s ease;
   color: white;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>

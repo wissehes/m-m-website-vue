@@ -9,44 +9,54 @@
         ></v-progress-linear>
       </v-card>
     </v-dialog>
-    <div v-if="!loading" class="article">
+    <Error v-if="errored" :load="load"/>
+    <v-container v-if="!loading" class="article">
       <div class="content">
         <h1 class="content-title">{{ article.title }}</h1>
         <VueMarkdown>{{ article.text }}</VueMarkdown>
       </div>
-    </div>
+    </v-container>
   </div>
 </template>
 
 <script>
 import VueMarkdown from "vue-markdown";
-
+import Error from "@/components/Error.vue"
 import axios from "axios";
 export default {
   data() {
     return {
       loading: true,
+      errored: false,
       article: {}
     };
   },
   components: {
-    VueMarkdown
+    VueMarkdown,
+    Error
   },
   mounted() {
-    axios
-      .get(`https://api.wissehes.nl/articles/${this.$route.params.id}`)
-      .then(res => (this.article = res.data))
-      .finally(() => (this.loading = false));
+    this.load()
+  },
+  methods: {
+    load() {
+      this.errored = false;
+      this.loading = true;
+      axios
+        .get(`https://api.wissehes.nl/articles/${this.$route.params.id}`)
+        .then(res => (this.article = res.data))
+        .catch(() => this.errored = true)
+        .finally(() => (this.loading = false));
+    }
   }
 };
 </script>
 
-<style scoped>
-.content {
-  margin-left: 10rem;
-  margin-right: 10rem;
-}
+<style>
 .content-title {
   text-align: center;
+}
+.content img {
+  max-width: 100%;
 }
 </style>
