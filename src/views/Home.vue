@@ -9,14 +9,7 @@
         ></v-progress-linear>
       </v-card>
     </v-dialog>
-    <v-alert prominent type="error" v-if="errored">
-      <v-row align="center">
-        <v-col class="grow">Kon niet verbinden met de server.</v-col>
-        <v-col class="shrink">
-          <v-btn @click="load">Opnieuw proberen</v-btn>
-        </v-col>
-      </v-row>
-    </v-alert>
+    <Error :show="errored" :reload="load" />
     <div v-if="!loading">
       <v-row no-gutters class="toparticles">
         <v-flex
@@ -37,7 +30,7 @@
           </router-link>
         </v-flex>
       </v-row>
-      <v-layout>
+      <v-row>
         <v-flex
           v-for="article in articles"
           md4
@@ -55,12 +48,13 @@
             <h1 class="cover-content">{{ article.title }}</h1>
           </router-link>
         </v-flex>
-      </v-layout>
+      </v-row>
     </div>
   </div>
 </template>
 
 <script>
+import Error from '@/components/Error.vue'
 import axios from "axios";
 export default {
   data() {
@@ -71,6 +65,9 @@ export default {
       articles: []
     };
   },
+  components: {
+    Error
+  },
   methods: {
     load() {
       this.loading = true;
@@ -78,7 +75,7 @@ export default {
       axios
         .get("https://api.wissehes.nl/articles")
         .then(res => {
-          this.articles = res.data;
+          this.articles = res.data.reverse();
           this.topArticles = this.articles.slice(0, 2);
           this.articles = this.articles.slice(2);
           this.errored = false;
